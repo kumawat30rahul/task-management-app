@@ -123,19 +123,26 @@ const UserRouteHandler = {
   },
 
   async updateLogo(req, res) {
-    const { userId, logo } = req.body;
-    if (!userId || !logo) {
+    const { userId } = req.body;
+    const imagFile = req.file;
+    console.log({ imagFile });
+
+    if (!userId || !imagFile) {
       return res.send(
         createErrorResponse({
           statusCode: 400,
-          message: "User Id and logo are required",
+          message: "User Id and Image is required",
           status: "ERROR",
-          error: {},
+          error: "Invalid Request Data",
         })
       );
     }
     try {
-      const user = await UserManger.updateLogo(userId, logo);
+      console.log("entered");
+
+      const user = await UserManger.updateLogo(userId, imagFile);
+      console.log("finished");
+
       if (user) {
         return res.send(
           createSuccessResponse({

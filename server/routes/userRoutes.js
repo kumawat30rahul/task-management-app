@@ -1,5 +1,6 @@
 const express = require("express");
 const UserRouteHandler = require("../handlers/userRouteHandler");
+const upload = require("../middlewares/multer");
 
 const userRouter = express.Router();
 
@@ -16,6 +17,10 @@ userRouter.post("/google-login", UserRouteHandler.googleLogin);
 userRouter.get("/:userId", UserRouteHandler.getUserById);
 
 //update logo
-userRouter.put("/update-logo", UserRouteHandler.updateLogo);
+userRouter.post(
+  "/update-logo",
+  upload.single("image"),
+  UserRouteHandler.updateLogo
+);
 
 module.exports = userRouter;

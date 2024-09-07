@@ -2,6 +2,7 @@ const idFieldCreator = require("../../utils/idCreator");
 const User = require("../../modals/userModal");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const cloudinary = require("../../utils/cloudinary");
 
 const UserManger = {
   async createUser(data) {
@@ -161,11 +162,13 @@ const UserManger = {
     }
   },
 
-  async updateLogo(userId, logo) {
+  async updateLogo(userId, imageFile) {
     try {
+      const result = await cloudinary.uploader.upload(imageFile?.path);
+      let imageUrl = result.secure_url;
       const user = await User.findOneAndUpdate(
         { userId },
-        { logo },
+        { logo: imageUrl },
         { new: true }
       );
       return Promise.resolve(user);

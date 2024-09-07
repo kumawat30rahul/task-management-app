@@ -1,22 +1,24 @@
-import { Avatar } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import CommonDialog from "../common/common-dialog";
 import { useNavigate } from "react-router-dom";
 import { SheetDemo } from "./userDetailsSheet";
-import { getUserDetails } from "@/Config/services";
+import { getUserDetails, updateProfilePicture } from "@/Config/services";
 import { dateFormater } from "../common/common-functions";
 import { useToast } from "../ui/use-toast";
 import { useCookies } from "react-cookie";
 import { googleLogout } from "@react-oauth/google";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Navbar = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["access_token"]);
   const { toast } = useToast();
   const [isLogoutModal, setIsLogoutModal] = useState(false);
-  const [isUserDetailsModal, setIsUserDetailsModal] = useState(false);
   const userId = JSON.parse(localStorage.getItem("userDetails"))?.userId;
   const [userDetails, setUserDetails] = useState();
+  const [uploadImageLoader, setUploadImageLoader] = useState(false);
+
   const navigate = useNavigate();
 
   const dialogContent = () => {
@@ -53,10 +55,6 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  const openUserDetailsFunc = () => {
-    setIsUserDetailsModal(true);
-  };
-
   const getUserDetailsFunc = async (userId) => {
     try {
       const response = await getUserDetails(userId);
@@ -75,10 +73,31 @@ const Navbar = () => {
       getUserDetailsFunc(userId);
     }
   }, [userId]);
+
+  const handleUpdateLogo = async (event) => {
+    const formData = new FormData();
+    formData.append("image", event.target.files[0]);
+    formData.append("userId", userId);
+    setUploadImageLoader(true);
+    try {
+      const response = await updateProfilePicture(formData);
+      setUserDetails((prev) => ({
+        ...prev,
+        logo: response?.data?.logo,
+      }));
+    } catch (error) {
+      toast({
+        severity: "destructive",
+        message: error?.message || "Something went wrong while uploading image",
+      });
+    } finally {
+      setUploadImageLoader(false);
+    }
+  };
   return (
     <div className="flex items-center justify-center p-2 bg-gradient-to-r backdrop-blur fixed top-0 left-0 right-0">
       <div className="flex items-center justify-between w-full ">
-        <div className="h-full w-auto">
+        <div className="h-full w-auto relative">
           <img
             src="https://i.imgur.com/5B9rCyp.png"
             alt="logo"
@@ -99,18 +118,33 @@ const Navbar = () => {
           </CommonDialog>
           <SheetDemo
             triggerButton={
-              <Avatar
-                className="cursor-pointer"
-                onClick={openUserDetailsFunc}
-                src={userDetails?.logo}
-              />
+              <Avatar className="cursor-pointer" src={userDetails?.logo} />
             }
           >
             <div className="w-full flex items-center justify-center flex-col gap-3">
-              <div className="w-full flex items-center justify-center relative">
-                <Avatar
-                  src={userDetails?.logo}
-                  sx={{ height: 100, width: 100 }}
+              <div className=" flex items-center justify-center relative">
+                <label htmlFor="image-upload">
+                  {uploadImageLoader && (
+                    <div className="absolute top-0 bottom-0 left-0 right-0 bg-black/60 rounded-full z-50 flex items-center justify-center">
+                      <CircularProgress
+                        size={20}
+                        sx={{ color: "white !important" }}
+                      />
+                    </div>
+                  )}
+                  <Avatar
+                    src={userDetails?.logo}
+                    sx={{ height: 100, width: 100, cursor: "pointer" }}
+                  />
+                  <div className="absolute top-1 left-1 text-white bg-black/60 p-1 rounded-full">
+                    <EditIcon />
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  id="image-upload"
+                  className="hidden"
+                  onChange={handleUpdateLogo}
                 />
               </div>
               <div className="flex flex-col items-start gap-3 w-full">

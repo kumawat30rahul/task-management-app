@@ -1,5 +1,10 @@
 import config from "./config";
-import { getRequest, patchRequest, postRequest } from "./servicesHeaders";
+import {
+  getRequest,
+  patchRequest,
+  postImageRequest,
+  postRequest,
+} from "./servicesHeaders";
 
 let envBaseUrl = config[import.meta.env.VITE_MY_ENV].backendUrl;
 
@@ -69,4 +74,9 @@ export const searchTasks = async (searchQuery) => {
 export const sortTasks = async (payload) => {
   const url = envBaseUrl + serviceList.task + `/sort`;
   return postRequest(url, payload);
+};
+
+export const updateProfilePicture = async (payload) => {
+  const url = envBaseUrl + serviceList.user + `/update-logo`;
+  return postImageRequest(url, payload);
 };
