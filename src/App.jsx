@@ -3,9 +3,11 @@ import './App.css'
 function App() {
 
   return (
-    <>
-       App.js
-    </>
+    <div className='bg-black'>
+      <span className='text-2xl font-bold text-black'>
+        App.js
+      </span>
+    </div>
   )
 }
 
