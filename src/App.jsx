@@ -30,6 +30,14 @@ function RoutesComponent() {
             </ProtectedRouteToHome>
           }
         />
+        <Route
+          path="/auth-userDetails"
+          element={
+            <ProtectedRouteToHome>
+              <UserDetailsSingupPage />
+            </ProtectedRouteToHome>
+          }
+        />
       </Routes>
     </>
   );

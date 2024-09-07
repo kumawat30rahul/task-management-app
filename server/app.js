@@ -13,8 +13,8 @@ app.use(express.urlencoded({ extended: true })); //parse application/x-www-form-
 //cors options
 const corsoptions = {
   origin: [
-    "http://localhost:5173/",
-    "http://localhost:5173",
+    "http://localhost:5174/",
+    "http://localhost:5174",
     "https://tast-management-application.vercel.app/",
     "https://tast-management-application.vercel.app",
   ], // restrict calls to those this address
