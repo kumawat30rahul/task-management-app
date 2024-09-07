@@ -25,6 +25,7 @@ const SignUpPage = () => {
   const [viewPassword, setViewPassword] = useState(false);
 
   const handleUserInfoChange = (value, name) => {
+    //condition to check id email is invalid or valid from client side
     if (name === "email") {
       if (value === "") {
         setInvalidEmail(false);
@@ -44,7 +45,8 @@ const SignUpPage = () => {
     }));
   };
 
-  const registerUserFunction = async () => {
+  const registerUserFunction = async (e) => {
+    e.preventDefault();
     setRegisteringUserLoader(true);
     const payload = {
       ...userInfo,
@@ -82,21 +84,38 @@ const SignUpPage = () => {
         inputValue: "firstName",
         errorMessage: "",
         inputPlaceholder: "First Name",
+        inputType: "text",
       },
       {
         inputLabel: "Last Name",
         inputValue: "lastName",
         errorMessage: "",
         inputPlaceholder: "Last Name",
+        inputType: "text",
       },
       {
         inputLabel: "Email",
         inputValue: "email",
         errorMessage: "",
         inputPlaceholder: "Enter your email",
+        inputType: "text",
+      },
+      {
+        inputLabel: "Password",
+        inputValue: "password",
+        errorMessage: "",
+        inputPlaceholder: "Enter your password",
+        inputType: viewPassword ? "text" : "password",
+      },
+      {
+        inputLabel: "Confirm Password",
+        inputValue: "confirmedPassword",
+        errorMessage: "",
+        inputPlaceholder: "Enter your password again",
+        inputType: "password",
       },
     ],
-    []
+    [viewPassword]
   );
 
   return (
@@ -113,95 +132,65 @@ const SignUpPage = () => {
         <span className="text-lg sm:text-3xl font-semibold text-center">
           Get Organized, Get Started
         </span>
-        {renderInputs?.map((item) => (
-          <div className="flex flex-col items-start w-full gap-2">
-            <label
-              className={`text-xs ${
-                inputLabel === item?.inputValue && "text-blue-600"
-              }`}
-              htmlFor={item?.inputValue}
-            >
-              {item?.inputLabel}
-            </label>
-            {inValidEmail && item?.inputValue === "email" && (
-              <span className="text-xs text-red-500">Invalid Email</span>
-            )}
-            <Input
-              placeholder={item?.inputPlaceholder}
-              onFocus={() => setInputLabel(item?.inputValue)}
-              onBlur={() => setInputLabel("")}
-              name={item?.inputValue}
-              onChange={(e) =>
-                handleUserInfoChange(e.target.value, item?.inputValue)
-              }
-            />
-          </div>
-        ))}
-        <div className="flex flex-col items-start w-full gap-2">
-          <label
-            className={`text-xs ${
-              inputLabel === "password" && "text-blue-600"
-            }`}
-            htmlFor="password"
-          >
-            Your Password
-          </label>
-          <div className="w-full relative">
-            <Input
-              placeholder="Enter your email"
-              onFocus={() => setInputLabel("password")}
-              onBlur={() => setInputLabel("")}
-              name="password"
-              type={viewPassword ? "text" : "password"}
-              onChange={(e) => handleUserInfoChange(e.target.value, "password")}
-            />
-            <div className="absolute right-2 top-1">
-              {!viewPassword ? (
-                <VisibilityIcon
-                  className="cursor-pointer"
-                  onClick={() => setViewPassword(true)}
+        <form
+          onSubmit={registerUserFunction}
+          className="w-full flex flex-col items-center justify-start gap-4"
+        >
+          {renderInputs?.map((item) => (
+            <div className="flex flex-col items-start w-full gap-2">
+              <label
+                className={`text-xs ${
+                  inputLabel === item?.inputValue && "text-blue-600 font-bold"
+                }`}
+                htmlFor={item?.inputValue}
+              >
+                {item?.inputLabel}
+              </label>
+              <div className="w-full relative">
+                <Input
+                  placeholder={item?.inputPlaceholder}
+                  onFocus={() => setInputLabel(item?.inputValue)}
+                  type={item?.inputType}
+                  onBlur={() => setInputLabel("")}
+                  name={item?.inputValue}
+                  onChange={(e) =>
+                    handleUserInfoChange(e.target.value, item?.inputValue)
+                  }
                 />
-              ) : (
-                <VisibilityOffIcon
-                  className="cursor-pointer"
-                  onClick={() => setViewPassword(false)}
-                />
+                {item?.inputValue === "password" && (
+                  <div className="absolute right-2 top-1">
+                    {!viewPassword ? (
+                      <VisibilityIcon
+                        className="cursor-pointer"
+                        onClick={() => setViewPassword(true)}
+                      />
+                    ) : (
+                      <VisibilityOffIcon
+                        className="cursor-pointer"
+                        onClick={() => setViewPassword(false)}
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+              {inValidEmail && item?.inputValue === "email" && (
+                <span className="text-xs text-red-500">Invalid Email</span>
               )}
             </div>
+          ))}
+          <div className="w-full h-auto">
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              {registeringUserLoader ? (
+                <CircularProgress size={18} sx={{ color: "white" }} />
+              ) : (
+                "Signup"
+              )}
+            </Button>
           </div>
-        </div>
-        <div className="flex flex-col items-start w-full gap-2">
-          <label
-            className={`text-xs ${
-              inputLabel === "confirm-password" && "text-blue-600"
-            }`}
-            htmlFor="confirm-password"
-          >
-            Confirm Password
-          </label>
-          <Input
-            placeholder="Enter your email"
-            onFocus={() => setInputLabel("confirm-password")}
-            onBlur={() => setInputLabel("")}
-            name="confirm-password"
-            type="password"
-            onChange={(e) =>
-              handleUserInfoChange(e.target.value, "confirmedPassword")
-            }
-          />
-        </div>
-        <div className="w-full h-auto">
-          <Button
-            className="w-full bg-blue-600 hover:bg-blue-700"
-            onClick={registerUserFunction}
-          >
-            {registeringUserLoader ? (
-              <CircularProgress size={18} sx={{ color: "white" }} />
-            ) : (
-              "Signup"
-            )}
-          </Button>
-        </div>
+        </form>
         <div>
           <span className="text-sm">
             Already have an account?{" "}
