@@ -103,8 +103,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center py-5 ">
-      <div className="w-auto h-auto flex flex-col items-center justify-start gap-4 min-w-96">
+    <div className="h-screen w-full flex flex-col items-center justify-center p-4 py-5 ">
+      <div className="w-full sm:w-auto h-auto flex flex-col items-center justify-start gap-4 sm:min-w-96">
         <span className="text-4xl font-semibold">Login</span>
         <div className="flex flex-col items-start w-full gap-2">
           <div className="flex items-center justify-between w-full">

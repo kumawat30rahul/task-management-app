@@ -87,7 +87,7 @@ const Navbar = () => {
       }));
     } catch (error) {
       toast({
-        severity: "destructive",
+        variant: "destructive",
         message: error?.message || "Something went wrong while uploading image",
       });
     } finally {

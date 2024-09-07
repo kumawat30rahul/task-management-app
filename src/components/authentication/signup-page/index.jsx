@@ -76,17 +76,17 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col items-center justify-center py-5">
-      <div className="w-auto h-auto flex flex-col items-center justify-start gap-4 min-w-96">
+    <div className="h-screen w-full flex flex-col items-center justify-center p-4 py-5">
+      <div className="w-full sm:w-auto h-auto flex flex-col items-center justify-start gap-4 sm:min-w-96">
         <div className="flex items-center">
           <img
             src="https://i.imgur.com/5B9rCyp.png"
             alt="logo"
             className="h-10 w-auto"
           />
-          <span className="text-2xl font-normal">TaskFlow</span>
+          <span className="text-xl sm:text-2xl font-normal">TaskFlow</span>
         </div>
-        <span className="text-3xl font-semibold">
+        <span className="text-lg sm:text-3xl font-semibold text-center">
           Get Organized, Get Started
         </span>
         <div className="flex flex-col items-start w-full gap-2">
