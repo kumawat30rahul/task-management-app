@@ -136,14 +136,15 @@ const TaskRouteHandler = {
 
   async getAllTasks(req, res) {
     try {
-      const response = await TaskManager.getTasks();
-      if (response) {
+      const { searchValue } = req.query;
+      const tasks = await TaskManager.getTasks(searchValue);
+      if (tasks) {
         return res.send(
           createSuccessResponse({
             statusCode: 200,
             message: "Successfully Fetched All Tasks",
             status: "SUCCESS",
-            data: response,
+            data: tasks,
           })
         );
       }
@@ -233,7 +234,6 @@ const TaskRouteHandler = {
 
   async sortTask(req, res) {
     const { sort } = req.body;
-    console.log({ sort });
     try {
       const response = await TaskManager.sortTask(sort);
       if (response) {

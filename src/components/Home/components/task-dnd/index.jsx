@@ -42,6 +42,7 @@ const TaskDragAndDrop = ({
   tasksDetails,
   taskUpdated,
   setTaskUpdated,
+  searchTerm,
 }) => {
   const [state, setState] = useState(initialData);
   const { toast } = useToast();
@@ -153,10 +154,15 @@ const TaskDragAndDrop = ({
     return newInitialData;
   };
 
-  const fetchingAllTasks = async () => {
+  const fetchingAllTasks = async (searchTerm) => {
     setFetchAllTasksLoader(true);
     try {
-      const response = await getAllTasks();
+      let response;
+      if (searchTerm) {
+        response = await getAllTasks(searchTerm);
+      } else {
+        response = await getAllTasks();
+      }
       if (response.status === "ERROR") {
         toast({
           variant: "destructive",
@@ -317,8 +323,12 @@ const TaskDragAndDrop = ({
   }, [taskUpdated?.status]);
 
   useEffect(() => {
-    fetchingAllTasks();
-  }, [fetchTasksAgain]);
+    if (searchTerm) {
+      fetchingAllTasks(searchTerm);
+    } else {
+      fetchingAllTasks();
+    }
+  }, [fetchTasksAgain, searchTerm]);
 
   return (
     <div className="p-4 w-full">

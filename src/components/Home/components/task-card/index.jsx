@@ -24,7 +24,6 @@ const TaskCard = ({
     setTaskId(taskId);
     // setIsOpen(true);
   };
-  console.log({ updateTaskStatusLoader });
 
   return (
     <div

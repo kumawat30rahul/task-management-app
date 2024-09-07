@@ -18,8 +18,11 @@ export const loginUser = async (payload) => {
   return postRequest(url, payload);
 };
 
-export const getAllTasks = async () => {
-  const url = envBaseUrl + serviceList.task + `/all`;
+export const getAllTasks = async (searchTerm) => {
+  const url =
+    envBaseUrl +
+    serviceList.task +
+    (searchTerm ? `/all?searchValue=${searchTerm}` : `/all`);
   return getRequest(url);
 };
 

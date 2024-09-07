@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CommonDialog from "../common/common-dialog";
 import SelectCommon from "../common/Common-select";
 import Navbar from "../Navbar";
@@ -17,6 +17,7 @@ import { CircularProgress } from "@mui/material";
 import { dateFormater } from "../common/common-functions";
 import { SearchSheet } from "./components/searchDetails";
 import { useToast } from "../ui/use-toast";
+import { debounce } from "lodash";
 
 const HomePage = () => {
   const { toast } = useToast();
@@ -27,6 +28,7 @@ const HomePage = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [fetchTasksAgain, setFetchTasksAgain] = useState(false);
   const [taskType, setTaskType] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const { userName } = userDetails;
   const [taskCardButtonLoaders, setTaskCardButtonLoaders] = useState({
     loader: false,
@@ -50,9 +52,19 @@ const HomePage = () => {
     { value: "High", label: "High" },
   ];
 
-  const taskDetailsHandler = (value, name) => {
-    console.log("entered");
+  const debouncedSearch = useCallback(
+    debounce((term) => {
+      setSearchTerm(term);
+    }, 200),
+    []
+  );
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    debouncedSearch(value); // Call the debounced function
+  };
+
+  const taskDetailsHandler = (value, name) => {
     setTasksDetails((prev) => ({
       ...prev,
       [name]: value,
@@ -332,20 +344,23 @@ const HomePage = () => {
       <Navbar />
       <div className="flex flex-col gap-3 items-start justify-start">
         <div className="flex flex-col gap-4 w-full bg-gradient-to-r from-blue-500 to-blue-800  items-center justify-center p-8 pt-14">
-          <span className="text-3xl md:text-5xl font-bold text-white text-center">Welcome!! {userName}</span>
+          <span className="text-3xl md:text-5xl font-bold text-white text-center">
+            Welcome!! {userName}
+          </span>
           <span className="text-white text-center">
             Take the first step - start adding tasks and watch your progress
             unfold!
           </span>
           <CommonDialog
-            title={`${taskType === "Add"
+            title={`${
+              taskType === "Add"
                 ? "Add Task"
                 : taskType === "View"
-                  ? "Task Details"
-                  : taskType === "Edit"
-                    ? "Edit Task"
-                    : "Delete Task"
-              }`}
+                ? "Task Details"
+                : taskType === "Edit"
+                ? "Edit Task"
+                : "Delete Task"
+            }`}
             isOpen={isOpen}
             setIsOpen={() => {
               setIsOpen(true);
@@ -355,23 +370,26 @@ const HomePage = () => {
             setIsClose={handleClose}
             dialogContent={dialogContent()}
           >
-            <Button className="bg-white text-black hover:text-white rounded-full box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25)">Add Task</Button>
+            <Button className="bg-white text-black hover:text-white rounded-full box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25)">
+              Add Task
+            </Button>
           </CommonDialog>
         </div>
         <div className="h-14 p-4  w-full rounded-full flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
           <div className="w-full sm:w-2/4 lg:w-1/4 rounded-lg">
-            <SearchSheet
+            {/* <SearchSheet
               setTaskType={setTaskType}
               setTaskId={setTaskId}
-              taskCardButtonLoaders={taskCardButtonLoaders}
-            >
-              <div>
-                <Input
-                  className="rounded-full w-full"
-                  placeholder="Search Here..."
-                />
-              </div>
-            </SearchSheet>
+              taskCardButtonLoaders={taskCardButtonLoaders} */}
+            {/* > */}
+            <div>
+              <Input
+                className="rounded-full w-full"
+                placeholder="Search Here..."
+                onChange={handleInputChange}
+              />
+            </div>
+            {/* </SearchSheet> */}
           </div>
           <div>
             <SelectCommon
@@ -393,6 +411,7 @@ const HomePage = () => {
           tasksDetails={tasksDetails}
           taskUpdated={taskUpdated}
           setTaskUpdated={setTaskUpdated}
+          searchTerm={searchTerm}
         />
       </div>
     </>

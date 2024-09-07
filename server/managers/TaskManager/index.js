@@ -81,9 +81,16 @@ const TaskManager = {
     }
   },
 
-  async getTasks() {
+  async getTasks(searchValue) {
     try {
-      const task = await Task.find().sort({ createdAt: -1 });
+      let task;
+      if (searchValue) {
+        task = await Task.find({
+          taskName: { $regex: searchValue, $options: "i" },
+        });
+      } else {
+        task = await Task.find().sort({ createdAt: -1 });
+      }
       return Promise.resolve(task);
     } catch (error) {
       return Promise.reject(error);
