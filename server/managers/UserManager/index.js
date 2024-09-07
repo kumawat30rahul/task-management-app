@@ -8,6 +8,13 @@ const UserManger = {
   async createUser(data) {
     const userId = await idFieldCreator("U", User, "userId");
     try {
+      const isEmailRegistered = await User.find({ email: data?.email });
+      if (isEmailRegistered?.[0]?.email === data?.email) {
+        return Promise.reject({
+          error: "Conflict in user creation with email",
+          message: "Email Already Exists",
+        });
+      }
       const hashedPassword = await bcrypt.hash(
         data?.password,
         Number(process.env.SALT_ROUNDS)
@@ -22,9 +29,11 @@ const UserManger = {
         createdAt: new Date(),
       });
 
-      await user.save();
+      // await user.save();
       return Promise.resolve(user);
     } catch (error) {
+      console.log({ error });
+
       return Promise.reject(error);
     }
   },

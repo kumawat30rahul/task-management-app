@@ -29,9 +29,9 @@ const UserRouteHandler = {
       return res.send(
         createErrorResponse({
           statusCode: 500,
-          message: "Failed to create user",
+          message: error?.message,
           status: "ERROR",
-          error: error,
+          error: error?.message || error,
         })
       );
     }

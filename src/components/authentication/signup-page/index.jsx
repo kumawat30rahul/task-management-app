@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { registerUser } from "@/Config/services";
 import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -75,6 +75,30 @@ const SignUpPage = () => {
     }
   };
 
+  const renderInputs = useMemo(
+    () => [
+      {
+        inputLabel: "First Name",
+        inputValue: "firstName",
+        errorMessage: "",
+        inputPlaceholder: "First Name",
+      },
+      {
+        inputLabel: "Last Name",
+        inputValue: "lastName",
+        errorMessage: "",
+        inputPlaceholder: "Last Name",
+      },
+      {
+        inputLabel: "Email",
+        inputValue: "email",
+        errorMessage: "",
+        inputPlaceholder: "Enter your email",
+      },
+    ],
+    []
+  );
+
   return (
     <div className="h-screen w-full flex flex-col items-center justify-center p-4 py-5">
       <div className="w-full sm:w-auto h-auto flex flex-col items-center justify-start gap-4 sm:min-w-96">
@@ -89,60 +113,30 @@ const SignUpPage = () => {
         <span className="text-lg sm:text-3xl font-semibold text-center">
           Get Organized, Get Started
         </span>
-        <div className="flex flex-col items-start w-full gap-2">
-          <label
-            className={`text-xs ${
-              inputLabel === "firstName" && "text-blue-600"
-            }`}
-            htmlFor="firstName"
-          >
-            First Name
-          </label>
-          <Input
-            placeholder="First Name"
-            onFocus={() => setInputLabel("firstName")}
-            onBlur={() => setInputLabel("")}
-            name="firstName"
-            onChange={(e) => handleUserInfoChange(e.target.value, "firstName")}
-          />
-        </div>
-        <div className="flex flex-col items-start w-full gap-2">
-          <label
-            className={`text-xs ${
-              inputLabel === "lastName" && "text-blue-600"
-            }`}
-            htmlFor="lastName"
-          >
-            Last Name
-          </label>
-          <Input
-            placeholder="Last Name"
-            onFocus={() => setInputLabel("lastName")}
-            onBlur={() => setInputLabel("")}
-            name="lastName"
-            onChange={(e) => handleUserInfoChange(e.target.value, "lastName")}
-          />
-        </div>
-        <div className="flex flex-col items-start w-full gap-2">
-          <div className="flex items-center justify-between w-full">
+        {renderInputs?.map((item) => (
+          <div className="flex flex-col items-start w-full gap-2">
             <label
-              className={`text-xs ${inputLabel === "email" && "text-blue-600"}`}
-              htmlFor="email"
+              className={`text-xs ${
+                inputLabel === item?.inputValue && "text-blue-600"
+              }`}
+              htmlFor={item?.inputValue}
             >
-              Work Email
+              {item?.inputLabel}
             </label>
-            {inValidEmail && (
+            {inValidEmail && item?.inputValue === "email" && (
               <span className="text-xs text-red-500">Invalid Email</span>
             )}
+            <Input
+              placeholder={item?.inputPlaceholder}
+              onFocus={() => setInputLabel(item?.inputValue)}
+              onBlur={() => setInputLabel("")}
+              name={item?.inputValue}
+              onChange={(e) =>
+                handleUserInfoChange(e.target.value, item?.inputValue)
+              }
+            />
           </div>
-          <Input
-            placeholder="Enter your email"
-            onFocus={() => setInputLabel("email")}
-            onBlur={() => setInputLabel("")}
-            name="email"
-            onChange={(e) => handleUserInfoChange(e.target.value, "email")}
-          />
-        </div>
+        ))}
         <div className="flex flex-col items-start w-full gap-2">
           <label
             className={`text-xs ${
@@ -208,7 +202,6 @@ const SignUpPage = () => {
             )}
           </Button>
         </div>
-
         <div>
           <span className="text-sm">
             Already have an account?{" "}
