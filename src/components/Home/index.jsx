@@ -330,23 +330,22 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
-      <div className="p-4 flex flex-col gap-3 items-start justify-start">
-        <div className="flex flex-col items-start gap-4">
-          <span className="text-2xl font-bold">Welcome!! {userName}</span>
-          <span>
+      <div className="flex flex-col gap-3 items-start justify-start">
+        <div className="flex flex-col gap-4 w-full bg-gradient-to-r from-blue-500 to-blue-800  items-center justify-center p-8 pt-14">
+          <span className="text-3xl md:text-5xl font-bold text-white text-center">Welcome!! {userName}</span>
+          <span className="text-white text-center">
             Take the first step - start adding tasks and watch your progress
             unfold!
           </span>
           <CommonDialog
-            title={`${
-              taskType === "Add"
+            title={`${taskType === "Add"
                 ? "Add Task"
                 : taskType === "View"
-                ? "Task Details"
-                : taskType === "Edit"
-                ? "Edit Task"
-                : "Delete Task"
-            }`}
+                  ? "Task Details"
+                  : taskType === "Edit"
+                    ? "Edit Task"
+                    : "Delete Task"
+              }`}
             isOpen={isOpen}
             setIsOpen={() => {
               setIsOpen(true);
@@ -356,10 +355,10 @@ const HomePage = () => {
             setIsClose={handleClose}
             dialogContent={dialogContent()}
           >
-            <Button className="bg-blue-500">Add Task</Button>
+            <Button className="bg-white text-black hover:text-white rounded-full box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25)">Add Task</Button>
           </CommonDialog>
         </div>
-        <div className="h-14 w-full rounded-full flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
+        <div className="h-14 p-4  w-full rounded-full flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
           <div className="w-full sm:w-2/4 lg:w-1/4 rounded-lg">
             <SearchSheet
               setTaskType={setTaskType}
@@ -368,7 +367,7 @@ const HomePage = () => {
             >
               <div>
                 <Input
-                  className="rounded-lg w-full"
+                  className="rounded-full w-full"
                   placeholder="Search Here..."
                 />
               </div>

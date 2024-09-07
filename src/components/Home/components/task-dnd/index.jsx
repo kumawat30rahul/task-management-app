@@ -319,8 +319,9 @@ const TaskDragAndDrop = ({
   useEffect(() => {
     fetchingAllTasks();
   }, [fetchTasksAgain]);
+
   return (
-    <>
+    <div className="p-4 w-full">
       <div className="flex items-center gap-2">
         <span className="text-lg font-bold">All Tasks</span>
         {fetchAllTasksLoader && <CircularProgress size={20} />}
@@ -336,9 +337,9 @@ const TaskDragAndDrop = ({
               );
               return (
                 <Grid item lg={4} md={6} sm={12} xs={12} className="h-full">
-                  <div className="flex flex-col items-center justify-start gap-2 rounded-lg  bg-gray-500/20 h-full">
+                  <div className="flex flex-col items-center justify-start gap-2 rounded-xl  bg-gray-500/20 h-full ">
                     <span
-                      className={`h-8 flex items-center justify-center w-full  text-center text-white font-bold rounded-lg ${
+                      className={`h-8 flex items-center justify-center w-full  text-center text-white font-bold rounded-full ${
                         column?.title === "TO DO"
                           ? "bg-blue-500"
                           : column?.title === "INPROGRESS"
@@ -396,7 +397,7 @@ const TaskDragAndDrop = ({
           </Grid>
         </div>
       </DragDropContext>
-    </>
+    </div>
   );
 };
 
