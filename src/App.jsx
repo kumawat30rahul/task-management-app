@@ -1,18 +1,29 @@
-import { useState } from "react";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import SignUpPage from "./components/authentication/signup-page";
-import LoginPage from "./components/authentication/login-page";
-import UserDetailsSingupPage from "./components/authentication/user-details";
-import HomePage from "./components/Home";
 import ProtectedRoute from "./components/authentication/protecteRoutes/toLogin";
 import { Toaster } from "./components/ui/toaster";
 import ProtectedRouteToHome from "./components/authentication/protecteRoutes/toHome";
-import Error404Page from "./components/error404";
+import { lazy, Suspense } from "react";
+import { CircularProgress } from "@mui/material";
+
+const SignUpPage = lazy(() =>
+  import("./components/authentication/signup-page/index")
+);
+const HomePage = lazy(() => import("./components/Home/index"));
+const LoginPage = lazy(() =>
+  import("./components/authentication/login-page/index")
+);
+const Error404Page = lazy(() => import("./components/error404/index"));
 
 function RoutesComponent() {
   return (
-    <>
+    <Suspense
+      fallback={
+        <div className="h-screen w-full flex items-center justify-center">
+          <CircularProgress />
+        </div>
+      }
+    >
       <Routes>
         <Route
           path="/"
@@ -31,17 +42,9 @@ function RoutesComponent() {
             </ProtectedRouteToHome>
           }
         />
-        <Route
-          path="/auth-userDetails"
-          element={
-            <ProtectedRouteToHome>
-              <UserDetailsSingupPage />
-            </ProtectedRouteToHome>
-          }
-        />
         <Route path="*" element={<Error404Page />} />
       </Routes>
-    </>
+    </Suspense>
   );
 }
 
