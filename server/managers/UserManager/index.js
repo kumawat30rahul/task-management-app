@@ -52,10 +52,10 @@ const UserManger = {
       const isMatch = await bcrypt.compare(loginData?.password, user?.password);
       if (!isMatch) {
         const data = {
-          statusCode: 400,
+          statusCode: 401,
           message: "Wrong Password",
           status: "ERROR",
-          error: "Invalid request data",
+          error: "Invalid Credentials",
         };
         return Promise.reject(data);
       }

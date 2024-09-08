@@ -52,10 +52,11 @@ const UserRouteHandler = {
       }
     } catch (error) {
       return res.send(
-        createConnectionErrorResponse({
+        createErrorResponse({
+          statusCode: error?.statusCode || 500,
           message: error?.message || "Failed to login user",
           status: error?.status || "ERROR",
-          error: error,
+          error: error?.error || error,
         })
       );
     }
