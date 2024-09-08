@@ -8,6 +8,7 @@ import HomePage from "./components/Home";
 import ProtectedRoute from "./components/authentication/protecteRoutes/toLogin";
 import { Toaster } from "./components/ui/toaster";
 import ProtectedRouteToHome from "./components/authentication/protecteRoutes/toHome";
+import Error404Page from "./components/error404";
 
 function RoutesComponent() {
   return (
@@ -38,6 +39,7 @@ function RoutesComponent() {
             </ProtectedRouteToHome>
           }
         />
+        <Route path="*" element={<Error404Page />} />
       </Routes>
     </>
   );
