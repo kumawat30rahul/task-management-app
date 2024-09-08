@@ -11,6 +11,7 @@ const taskValidation = (body) => {
     updatedByUserId,
     taskStatus,
   } = body;
+
   if (taskId) {
     if (!taskId) {
       return createErrorResponse({
@@ -53,22 +54,21 @@ const taskValidation = (body) => {
     });
   }
 
-  if (taskName.trim() === "") {
-    return createErrorResponse({
-      statusCode: 400,
-      message: "Invalid Task Title",
-      error: "Invalid Reuest Data",
-    });
-  }
-
   if (taskName?.length < 3) {
     return createErrorResponse({
       statusCode: 400,
-      message: "Task title must be greater than 3 letters",
-      error: "Invalid Request Data",
+      message: "Task title must be greater than 3 characters",
+      error: "Invalid request data",
     });
   }
 
+  if (taskName && taskName.trim() === "") {
+    return createErrorResponse({
+      statusCode: 400,
+      message: "Invalid Task Title",
+      error: "Invalid request data",
+    });
+  }
   if (!createdBy && !taskId) {
     return createErrorResponse({
       statusCode: 400,
