@@ -26,10 +26,11 @@ const validateUserRegistrationFields = (body) => {
     });
   }
 
-  if (firstName?.length < 2) {
+  if (firstName?.length < 3) {
     return createErrorResponse({
       statusCode: 400,
-      message: "Firstname should be more that 2 letters",
+      message: "Firstname should be more that 2 characters",
+      error: "Invalid request data",
     });
   }
 
@@ -41,18 +42,18 @@ const validateUserRegistrationFields = (body) => {
     });
   }
 
-  if (lastName.trim() === "") {
-    return createErrorResponse({
-      statusCode: 400,
-      message: "Provide Proper Last Name",
-      error: "Invalid request data",
-    });
-  }
-
   if (!lastName) {
     return createErrorResponse({
       statusCode: 400,
       message: "Last Name is required",
+      error: "Invalid request data",
+    });
+  }
+
+  if (lastName.trim() === "") {
+    return createErrorResponse({
+      statusCode: 400,
+      message: "Provide Proper Last Name",
       error: "Invalid request data",
     });
   }
@@ -69,6 +70,14 @@ const validateUserRegistrationFields = (body) => {
     return createErrorResponse({
       statusCode: 400,
       message: "Password is required",
+      error: "Invalid request data",
+    });
+  }
+
+  if (password?.length < 7) {
+    return createErrorResponse({
+      statusCode: 400,
+      message: "Password should be atleast 8 characters long",
       error: "Invalid request data",
     });
   }

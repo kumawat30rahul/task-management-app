@@ -29,11 +29,9 @@ const UserManger = {
         createdAt: new Date(),
       });
 
-      // await user.save();
+      await user.save();
       return Promise.resolve(user);
     } catch (error) {
-      console.log({ error });
-
       return Promise.reject(error);
     }
   },

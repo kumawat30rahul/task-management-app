@@ -31,7 +31,7 @@ const UserRouteHandler = {
           statusCode: 500,
           message: error?.message,
           status: "ERROR",
-          error: error?.message || error,
+          error: error,
         })
       );
     }
