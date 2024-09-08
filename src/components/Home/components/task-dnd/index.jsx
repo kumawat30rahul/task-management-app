@@ -117,7 +117,9 @@ const TaskDragAndDrop = ({
   };
 
   const settingDndData = (allTasks) => {
+    // Reducing the allTasks array to an object with taskId as the key
     const allTaskData = allTasks?.reduce((acc, task) => {
+      // Assigning properties of each task to an object with taskId as the key
       acc[task?.taskId] = {
         id: task?.taskId,
         taskName: task?.taskName,
@@ -127,6 +129,8 @@ const TaskDragAndDrop = ({
         status: task?.taskStatus,
         expiryDate: task?.expiryDate,
       };
+
+      // Returning all the tasks
       return acc;
     }, {});
 

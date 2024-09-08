@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CommonDialog from "../common/common-dialog";
 import SelectCommon from "../common/Common-select";
 import Navbar from "../Navbar";
@@ -21,7 +21,10 @@ import { debounce } from "lodash";
 
 const HomePage = () => {
   const { toast } = useToast();
-  const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+  const userDetails = useMemo(
+    () => JSON.parse(localStorage.getItem("userDetails") || {}),
+    []
+  );
   const [tasksDetails, setTasksDetails] = useState();
   const [taskId, setTaskId] = useState("");
   const [taskCreationLoader, setTaskCreationLoader] = useState(false);
@@ -71,7 +74,7 @@ const HomePage = () => {
     }));
   };
 
-  const createTaskFunction = async () => {
+  const createTaskFunction = useCallback(async () => {
     setTaskCreationLoader(true);
     try {
       const payload = {
@@ -102,129 +105,134 @@ const HomePage = () => {
       });
       setTaskCreationLoader(false);
     }
-  };
+  }, [tasksDetails, userName, userDetails]);
 
   const handleClose = () => {
     setTaskType("");
     setIsOpen(false);
   };
 
-  const dialogContent = () => {
-    if (taskType === "Add" || taskType === "Edit") {
-      return (
-        <div className="flex flex-col items-start justify-start gap-3 w-full">
-          <div className="w-full flex flex-col items-start">
-            <label htmlFor="name">Title</label>
-            <Input
-              placeholder="Type Here..."
-              value={tasksDetails?.taskName}
-              name="name"
-              className="custom-input"
-              onChange={(e) => taskDetailsHandler(e.target.value, "taskName")}
+  const DialogContent = () => {
+    const renderTaskForm = () => (
+      <div className="flex flex-col items-start justify-start gap-3 w-full">
+        <div className="w-full flex flex-col items-start">
+          <label htmlFor="name">Title</label>
+          <Input
+            placeholder="Type Here..."
+            value={tasksDetails?.taskName}
+            name="name"
+            className="custom-input"
+            onChange={(e) => taskDetailsHandler(e.target.value, "taskName")}
+          />
+        </div>
+        <div className="w-full flex flex-col items-start">
+          <label htmlFor="desc">Task Description</label>
+          <Input
+            placeholder="Type Here..."
+            value={tasksDetails?.taskDescription}
+            name="desc"
+            className="custom-input"
+            onChange={(e) =>
+              taskDetailsHandler(e.target.value, "taskDescription")
+            }
+          />
+        </div>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-2 w-full">
+          <div className="w-full">
+            <SelectCommon
+              defaultPlaceHolder="Severity"
+              options={severityOptions}
+              setTasksDetails={setTasksDetails}
+              tasksDetails={tasksDetails}
+              isCreateTask={true}
             />
           </div>
-          <div className="w-full flex flex-col items-start">
-            <label htmlFor="desc">Task Description</label>
-            <Input
-              placeholder="Type Here..."
-              value={tasksDetails?.taskDescription}
-              name="desc"
-              className="custom-input"
-              onChange={(e) =>
-                taskDetailsHandler(e.target.value, "taskDescription")
-              }
+          <div className="w-full">
+            <DatePicker
+              setTasksDetails={setTasksDetails}
+              tasksDetails={tasksDetails}
             />
-          </div>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-2 w-full">
-            <div className="w-full">
-              <SelectCommon
-                defaultPlaceHolder="Severity"
-                options={severityOptions}
-                setTasksDetails={setTasksDetails}
-                tasksDetails={tasksDetails}
-                isCreateTask={true}
-              />
-            </div>
-            <div className="w-full">
-              <DatePicker
-                setTasksDetails={setTasksDetails}
-                tasksDetails={tasksDetails}
-              />
-            </div>
-          </div>
-          <div>
-            <Button
-              className="bg-blue-500"
-              onClick={
-                taskType === "Edit" ? editingTaskFunction : createTaskFunction
-              }
-            >
-              {taskCreationLoader ? (
-                <CircularProgress
-                  size={18}
-                  sx={{ color: "white !important" }}
-                />
-              ) : taskType === "Edit" ? (
-                "Update"
-              ) : (
-                "Create Task"
-              )}
-            </Button>
           </div>
         </div>
-      );
-    } else if (taskType === "View") {
-      return (
-        <div className="flex flex-col gap-3 mt-3">
-          <div className="flex flex-col items-start">
-            <span>Title</span>
-            <span className="text-xl font-bold text-black">
-              {tasksDetails?.taskName || "NA"}
-            </span>
-          </div>
-          <div className="flex flex-col items-start">
-            <span>Description</span>
-            <span className="text-lg text-black text-start">
-              {tasksDetails?.taskDescription || "NA"}
-            </span>
-          </div>
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col items-start">
-              <span>Created At</span>
-              <span className="text-lg text-black">
-                {dateFormater(
-                  tasksDetails?.createdAt,
-                  "dd MMMM yyyy, hh:mm a"
-                ) || "NA"}
-              </span>
-            </div>
-            <div>
-              <span className="custom-severity-todo">
-                {tasksDetails?.taskStatus}
-              </span>
-            </div>
-          </div>
-          <Button className="bg-blue-500 w-max" onClick={handleClose}>
-            Close
+        <div>
+          <Button
+            className="bg-blue-500"
+            onClick={
+              taskType === "Edit" ? editingTaskFunction : createTaskFunction
+            }
+          >
+            {taskCreationLoader ? (
+              <CircularProgress size={18} sx={{ color: "white !important" }} />
+            ) : taskType === "Edit" ? (
+              "Update"
+            ) : (
+              "Create Task"
+            )}
           </Button>
         </div>
-      );
-    } else if (taskType === "Delete") {
-      return (
-        <div className="flex flex-col items-start relativ">
-          <span className="text-start">
-            Are you sure you want to delete this task?
+      </div>
+    );
+
+    const renderViewTask = () => (
+      <div className="flex flex-col gap-3 mt-3">
+        <div className="flex flex-col items-start">
+          <span>Title</span>
+          <span className="text-xl font-bold text-black">
+            {tasksDetails?.taskName || "NA"}
           </span>
-          <div className="flex items-center justify-start md:justify-end gap-2 mt-4 w-full">
-            <Button className="bg-red-500 w-max" onClick={deleteTaskFunction}>
-              Yes
-            </Button>
-            <Button className="bg-blue-500 w-max" onClick={handleClose}>
-              No
-            </Button>
+        </div>
+        <div className="flex flex-col items-start">
+          <span>Description</span>
+          <span className="text-lg text-black text-start">
+            {tasksDetails?.taskDescription || "NA"}
+          </span>
+        </div>
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col items-start">
+            <span>Created At</span>
+            <span className="text-lg text-black">
+              {dateFormater(tasksDetails?.createdAt, "dd MMMM yyyy, hh:mm a") ||
+                "NA"}
+            </span>
+          </div>
+          <div>
+            <span className="custom-severity-todo">
+              {tasksDetails?.taskStatus}
+            </span>
           </div>
         </div>
-      );
+        <Button className="bg-blue-500 w-max" onClick={handleClose}>
+          Close
+        </Button>
+      </div>
+    );
+
+    const renderDeleteTask = () => (
+      <div className="flex flex-col items-start relative">
+        <span className="text-start">
+          Are you sure you want to delete this task?
+        </span>
+        <div className="flex items-center justify-start md:justify-end gap-2 mt-4 w-full">
+          <Button className="bg-red-500 w-max" onClick={deleteTaskFunction}>
+            Yes
+          </Button>
+          <Button className="bg-blue-500 w-max" onClick={handleClose}>
+            No
+          </Button>
+        </div>
+      </div>
+    );
+
+    switch (taskType) {
+      case "Add":
+      case "Edit":
+        return renderTaskForm();
+      case "View":
+        return renderViewTask();
+      case "Delete":
+        return renderDeleteTask();
+      default:
+        return null;
     }
   };
 
@@ -367,7 +375,7 @@ const HomePage = () => {
               setTasksDetails({});
             }}
             setIsClose={handleClose}
-            dialogContent={dialogContent()}
+            dialogContent={<DialogContent />}
           >
             <Button className="bg-white text-black hover:text-white rounded-full box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25)">
               Add Task
