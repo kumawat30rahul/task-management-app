@@ -33,7 +33,14 @@ function RoutesComponent() {
             </ProtectedRoute>
           }
         />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route
+          path="/signup"
+          element={
+            <ProtectedRouteToHome>
+              <SignUpPage />
+            </ProtectedRouteToHome>
+          }
+        />
         <Route
           path="/login"
           element={

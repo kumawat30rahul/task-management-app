@@ -174,6 +174,7 @@ const LoginPage = () => {
             <Button
               className="w-full bg-blue-600 hover:bg-blue-700"
               type="submit"
+              disabled={loginLoader}
             >
               {loginLoader ? (
                 <CircularProgress

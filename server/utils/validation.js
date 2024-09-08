@@ -66,6 +66,14 @@ const validateUserRegistrationFields = (body) => {
     });
   }
 
+  if (!validateEmail(email)) {
+    return createErrorResponse({
+      statusCode: 400,
+      message: "Invalid Email",
+      error: "Invalid request data",
+    });
+  }
+
   if (!password) {
     return createErrorResponse({
       statusCode: 400,
@@ -133,5 +141,10 @@ const validateLoginFields = (body) => {
     });
   }
 };
+
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 
 module.exports = { validateUserRegistrationFields, validateLoginFields };

@@ -28,10 +28,10 @@ const UserRouteHandler = {
     } catch (error) {
       return res.send(
         createErrorResponse({
-          statusCode: 500,
-          message: error?.message,
+          statusCode: error?.statusCode || 500,
+          message: error?.message || "Something went wrong while creating user",
           status: "ERROR",
-          error: error,
+          error: error?.error || error,
         })
       );
     }

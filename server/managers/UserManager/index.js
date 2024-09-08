@@ -13,6 +13,7 @@ const UserManger = {
         return Promise.reject({
           error: "Conflict in user creation with email",
           message: "Email Already Exists",
+          statusCode: 409,
         });
       }
       const hashedPassword = await bcrypt.hash(
@@ -41,8 +42,8 @@ const UserManger = {
       const user = await User.findOne({ email: loginData?.email });
       if (!user) {
         const data = {
-          statusCode: 400,
-          message: "Invalid Email",
+          statusCode: 404,
+          message: "User with this email does not exist",
           status: "ERROR",
           error: "Invalid request data",
         };
