@@ -1,6 +1,6 @@
 import { Avatar, CircularProgress } from "@mui/material";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CommonDialog from "../common/common-dialog";
 import { useNavigate } from "react-router-dom";
 import { SheetDemo } from "./userDetailsSheet";
@@ -15,13 +15,29 @@ const Navbar = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["access_token"]);
   const { toast } = useToast();
   const [isLogoutModal, setIsLogoutModal] = useState(false);
-  const userId = JSON.parse(localStorage.getItem("userDetails"))?.userId;
+  const userId = useMemo(
+    () => JSON.parse(localStorage.getItem("userDetails"))?.userId,
+    []
+  );
   const [userDetails, setUserDetails] = useState();
   const [uploadImageLoader, setUploadImageLoader] = useState(false);
 
   const navigate = useNavigate();
 
-  const dialogContent = () => {
+  const handleLogout = useCallback(() => {
+    const isGoogleUser =
+      Boolean(localStorage.getItem("isGoogleLogin")) === false;
+    if (isGoogleUser) googleLogout();
+
+    removeCookie("access_token", { path: "/" });
+    localStorage.clear();
+    toast({ variant: "success", title: "Logout Success" });
+    navigate("/login");
+  }, []);
+
+  const handleClose = useCallback(() => setIsLogoutModal(false), []);
+
+  const dialogContent = useMemo(() => {
     return (
       <div className="flex flex-col items-start ">
         <span>Are you sure you want to logout?</span>
@@ -35,27 +51,9 @@ const Navbar = () => {
         </div>
       </div>
     );
-  };
+  }, []);
 
-  const handleClose = () => {
-    setIsLogoutModal(false);
-  };
-
-  const handleLogout = () => {
-    const isGoogleUser = localStorage.getItem("isGoogleLogin");
-    if (isGoogleUser === true) {
-      googleLogout();
-    }
-    removeCookie("access_token", { path: "/" });
-    localStorage.clear();
-    toast({
-      variant: "success",
-      title: "Logout Success",
-    });
-    navigate("/login");
-  };
-
-  const getUserDetailsFunc = async (userId) => {
+  const getUserDetailsFunc = useCallback(async (userId) => {
     try {
       const response = await getUserDetails(userId);
       if (response?.status === "ERROR") {
@@ -66,7 +64,7 @@ const Navbar = () => {
     } catch (error) {
       setUserDetails(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -74,6 +72,7 @@ const Navbar = () => {
     }
   }, [userId]);
 
+  //handling image upload
   const handleUpdateLogo = async (event) => {
     const formData = new FormData();
     formData.append("image", event.target.files[0]);
@@ -108,7 +107,7 @@ const Navbar = () => {
           <CommonDialog
             isOpen={isLogoutModal}
             setIsOpen={() => setIsLogoutModal(true)}
-            dialogContent={dialogContent()}
+            dialogContent={dialogContent}
             title={"Logout"}
             setIsClose={handleClose}
           >
