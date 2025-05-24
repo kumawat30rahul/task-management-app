@@ -209,6 +209,11 @@ const LoginPage = () => {
             </a>
           </span>
         </div>
+        <div className="flex flex-col gap-1 font-bold">
+          <span className="text-sm  text-center">Dummy User</span>{" "}
+          <span className="text-sm">Email: user@gmail.com</span>{" "}
+          <span className="text-sm">Password: User@123</span>
+        </div>
       </div>
     </div>
   );
